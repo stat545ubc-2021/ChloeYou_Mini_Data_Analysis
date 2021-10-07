@@ -1,11 +1,8 @@
 ---
 title: "Mini Data-Analysis Deliverable 1"
-output: html_document
+output: md_document
+author: Chloe You
 ---
-
-# Welcome to your (maybe) first-ever data analysis project!
-
-And hopefully the first of many. Let's get started:
 
 1. Install the [`datateachr`](https://github.com/UBC-MDS/datateachr) package by typing the following into your **R terminal**:
 
@@ -16,7 +13,7 @@ devtools::install_github("UBC-MDS/datateachr")
 
 2. Load the packages below.
 
-```{r}
+```{r, echo=F}
 library(datateachr)
 library(tidyverse)
 ```
@@ -25,47 +22,8 @@ library(tidyverse)
 
 4. When you go to submit, submit a URL to your repository to canvas. 
 
-# Instructions
-
-More details regarding the instructions and points allocated to each task can be found below. Briefly,
-
-+ Each milestone is worth 30 points. The number of points allocated to each task will be annotated within each deliverable. Tasks that are more challenging will often be allocated more points.
-
-+ 10 points will be allocated to the reproducibility, cleanliness, and coherence of the analysis. While the three milestones will be submitted as independent deliverables, the analysis itself is a continuum - think of it as 3 chapters to a story. Each chapter, or in this case, portion of your analysis, should be easily followed through by someone unfamiliar with the content. [Here](https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/) is a good resource for what constitutes "good code". Learning good coding practices early in your career will save you hassle later on!
-
-# Learning Objectives
-
-By the end of this milestone, you should:
-
-+ Become familiar with your dataset of choosing
-+ Think of 4 questions that you would like to answer with your data
-+ Generate a reproducible and clear report using R Markdown
-
 # Task 1: Choose your favorite dataset (10 points)
 
-The `datateachr` package by Hayley Boyce and Jordan Bourak currently composed of 7 semi-tidy datasets for educational purposes. Here is a brief description of each dataset:
-
-+ *apt_buildings*: Acquired courtesy of The City of Toronto’s Open Data Portal. It currently has 3455 rows and 37 columns.
-
-+ *building_permits*: Acquired courtesy of The City of Vancouver’s Open Data Portal. It currently has 20680 rows and 14 columns.
-
-+ *cancer_sample*: Acquired courtesy of UCI Machine Learning Repository. It currently has 569 rows and 32 columns.
-
-+ *flow_sample*: Acquired courtesy of The Government of Canada’s Historical Hydrometric Database. It currently has 218 rows and 7 columns.
-
-+ *parking_meters*: Acquired courtesy of The City of Vancouver’s Open Data Portal. It currently has 10032 rows and 22 columns.
-
-+ *steam_games*: Acquired courtesy of Kaggle. It currently has 40833 rows and 21 columns.
-
-+ *vancouver_trees*: Acquired courtesy of The City of Vancouver’s Open Data Portal. It currently has 146611 rows and 20 columns.
-
-**Things to keep in mind**
-
-+ We hope that this project will serve as practice for carrying our your own *independent* data analysis. Remember to comment your code, be explicit about what you are doing, and write notes in this markdown document when you feel that context is required. As you advance in the project, prompts and hints to do this will be diminished - it'll be up to you!
-
-+ Before choosing a dataset, you should always keep in mind **your goal**, or in other ways, *what you wish to achieve with this data*. This mini data-analysis project focuses on *data wrangling*, *tidying*, and *visualization*. In short, it's a way for you to get your feet wet with exploring data on your own.
-
-And that is exactly the first thing that you will do!
 
 1.1 Out of the 7 datasets available in the `datateachr` package, choose **4** that appeal to you based on their description. Write your choices below:
 
@@ -73,21 +31,89 @@ And that is exactly the first thing that you will do!
 
 1. steam_games: Acquired courtesy of Kaggle. It currently has 40833 rows and 21 columns.
 2. cancer_sample: Acquired courtesy of UCI Machine Learning Repository. It currently has 569 rows and 32 columns.
-3.  apt_buildings: Acquired courtesy of The City of Toronto’s Open Data Portal. It currently has 3455 rows and 37 columns.
+3. apt_buildings: Acquired courtesy of The City of Toronto’s Open Data Portal. It currently has 3455 rows and 37 columns.
 4. parking_meters: Acquired courtesy of The City of Vancouver’s Open Data Portal. It currently has 10032 rows and 22 columns.
 
 1.2 One way to narrowing down your selection is to *explore* the datasets. Use your knowledge of dplyr to find out at least *3* attributes about each of these datasets (an attribute is something such as number of rows, variables, class type...). The goal here is to have an idea of *what the data looks like*. 
 
 *Hint:* This is one of those times when you should think about the cleanliness of your analysis. I added a single code chunk for you, but do you want to use more than one? Would you like to write more comments outside of the code chunk?
 
+##### 1. Steam Games 
+The Steam Games data set contains 40,833 rows, and 21 columns. The dataset comes in the following classes: "spec_tbl_df","tbl_df", "tbl", "data.frame". Most of the dataset columns contain text.     
 ```{r}
-### EXPLORE HERE ###
-steam_games
+# ?steam_games  # gives more in-depth description of the data
+glimpse(steam_games)
 ```
+```{r}
+# The variables include 
+# 1. "id": the unique ID tied to the game
+# 2. "url": link to the game on Steam
+# 3. "types": app, bundle, sub
+# 4. "name": name of the game
+# 5. "desc_snippet": snippet of the game description             
+# 6. "recent_reviews": Recent 30 days aggregated review from players. Shows the overall player sentiment towards the game. Example review: "Mixed,(6,214),- 49% of the 6,214 user reviews in the last 30 days are positive.""
+# 7. "all_reviews": Similar to `recent_reviews`, `all_reviews` shows the aggregrated review and player sentiment of all players life-to-date.              
+# 8. "release_date": The release date of the title
+# 9. "developer": The developer of the game           
+# 10."publisher": The publisher            
+# 11."popular_tags": Tags that describe the game          
+# 12."game_details":            
+# 13."languages"                
+# 14."achievements"            
+# 15."genre"                    
+# 16."game_description"        
+# 17."mature_content": whether there are mature content in the game and what type.  
+# 18."minimum_requirements": minimum hardware requirement for PC
+# 19."recommended_requirements": recommended hardware requirement for best gameplay experience
+# 20."original_price"        
+# 21."discount_price" 
+```
+
+##### 2. Cancer Samples
+The cancer sample data set contains 569 rows, and 32 columns. The dataset comes in the following classes: "spec_tbl_df","tbl_df", "tbl", "data.frame". Other than the ID column which identifies the sample ID, and the `diagnosis` column which is a vector  of characters with either "M" for malignant or "B" for benign, all the other 30 columns are numeric and are quantitative measures such as mean and standard error.
+```{r}
+# ?cancer_sample # gives more in-depth description of the data
+glimpse(cancer_sample)
+```
+
+##### 3.  apt_buildings
+The apt_buildings data set contains 3,455 rows and 37 columns. The column data types are a mix of characters and doubles. 
+```{r}
+# ?apt_buildings # gives more in-depth description of the data
+glimpse(apt_buildings)
+```
+##### 4. parking_meters
+This dataset contains information on the rates and time limits for parking meters in Vancouver. Information is shown for entire block faces rather than for individual meters. 
+The parking_meters data set contains 10,232 rows and 22 columns. The columns are a mix of characters and doubles. 
+```{r}
+# ?parking_meters # gives more in-depth description of the data
+glimpse(parking_meters)
+```
+
+
 
 1.3 Now that you've explored the 4 datasets that you were initially most interested in, let's narrow it down to 2. What lead you to choose these 2? Briefly explain your choices below, and feel free to include any code in your explanation. 
 
+---
+
+
+I will be analyzing `steam_games` and `cancer_samples` datasets. I am interested in video games and would like to see if there are any interesting trends in the data. I'm also interested in seeing how cancer data is presented and would like to try analyzing it. 
+
+---
+
+
+
 1.4 Time for the final decision! Going back to the beginning, it's important to have an *end goal* in mind. For example, if I had chosen the `titanic` dataset for my project, I might've wanted to explore the relationship between survival and other variables. Try to think of 1 research question that you would want to answer with each dataset. Note them down below, and make your final choice based on what seems more interesting to you!
+
+---
+
+1.4.1: For Steam games, I'm interested in seeing whether factors such as genre, publisher, popular tags, release date are associated with the number of total reviews a game recieves, as well as the player sentiment(% of total reviews that are positive). If associations and trends can be identified, the next step is to predict player sentiment for future games with certain attributes. 
+
+1.4.2: For cancer samples, we can look at if there are significant differences in the quantitative features that were calculated from images of nuclei present in fine needle aspiration biopsies of breast masses between the patients who were diagnosed as malignant or begign. If some of the quatitative features show signs of significant differences between the two cohorts, they can potentially become one of the clinical diagnosis measures in practice. 
+
+**Final Choice: Steam Game dataset will be used for the rest of the report.**
+
+---
 
 # Important note
 
@@ -117,7 +143,87 @@ If we rewind and go back to the learning objectives, you'll see that by the end 
 So far, you have chosen a dataset and gotten familiar with it through exploring the data. Now it's time to figure out 4 research questions that you would like to answer with your data! Write the 4 questions and any additional comments at the end of this deliverable. These questions are not necessarily set in stone - TAs will review them and give you feedback; therefore, you may choose to pursue them as they are for the rest of the project, or make modifications!
 
 <!--- *****START HERE***** --->
+---
 
+## Exploratory Analysis
+
+Before we dive into the data, notice that the game name is not the unique identifier of each row.
+```{r}
+nrow(steam_games) == length(unique(steam_games$name)) 
+## 40833   40752
+nrow(steam_games[steam_games$types=='app',]) == length(unique(steam_games[steam_games$types=='app',]$name)) 
+# 38,023   37,964 
+## some game titles are not unique in the data but not too many
+```
+
+###### 1. Create a new variable based on other variables in your data (only if it makes sense) 
+`ratio_of_postive_user_reviews`: extracted from `all_reviews`, the ratio of all reviews that were positive. 
+```{r}
+# creates new column and coverts character to double
+sg_copy = steam_games %>% mutate(ratio_of_postive_user_reviews = as.numeric(str_match(all_reviews, ",- \\s*(.*?)\\s*% of the")[,2])/100 )
+# glimpse(sg_copy)
+```
+
+`number_of_total_reviews`: extracted from `all_reviews`, the total number of user reviews since the game was released.
+```{r}
+# creates new column and coverts character to double
+sg_copy = sg_copy %>% mutate(number_of_total_reviews =  as.numeric(gsub(",","",str_match(all_reviews, "of the \\s*(.*?)\\s* user")[,2])))
+# glimpse(sg_copy)
+```
+###### 2. Filter observations in your data according to your own criteria. 
+We will only keep data that are of the `app` type which refers to the standard game. Since`bundle` and `sub` are referring to expansion packs or the sale contains other things tha the base game and is not a good measure for player sentiment of the game itself. 
+```{r}
+sg_copy = sg_copy %>% filter(types == 'app')
+dim(sg_copy) # 40,833 rows dropped to 38,021
+# glimpse(sg_copy)
+```
+
+###### 3. Investigate how many missing values there are per variable. Can you find a way to plot this?
+```{r}
+NA_rate <- sg_copy %>% 
+ summarise(col_name= colnames(sg_copy),num_NA=colSums(is.na(.)), proportion_of_all_row= num_NA/nrow(sg_copy)) %>% 
+  arrange(desc(proportion_of_all_row))
+
+ggplot(NA_rate, aes(x=reorder(col_name, proportion_of_all_row), y= proportion_of_all_row)) + 
+  geom_bar(stat='identity') + 
+  coord_flip()
+
+```
+Notice that 25% of the 38K rows have NA as `all_reviews`. But a missing value rate of ~50% of the extracted variables. With further investigation, we indentified that titles with too few reviews will not get a summarized player sentiment. Their `all_reviews` look something like "9 user reviews,- Need more user reviews to generate a score". **For this analysis we won't consider player sentiment for these games**. 
+
+**Overall we see that around half of the games in this dataset weren't given enough reviews. Keeping that in mind, we will continue our analysis on the other half which have recieved enough reviews.**
+
+###### 4. Make a new tibble with a subset of your data, with variables and observations that you are interested in exploring.
+Since we are interested in effects of genre, developer, popular tags, release time on volume of review and player sentiment, we will keep columns related to them and remove the other ones. 
+```{r}
+# colnames(sg_copy)
+sg_copy <- sg_copy %>% select(name, genre, developer, ratio_of_postive_user_reviews, number_of_total_reviews, release_date, game_details, popular_tags)
+```
+
+
+###### 5. Plot the distribution of a numeric variable.
+We will plot the distribution of player sentiment of titles to get a general understanding of how often a title is viewed positively.
+```{r}
+ggplot(sg_copy, aes(x=ratio_of_postive_user_reviews)) +
+   geom_histogram() + theme_minimal()
+```
+Based on the distribtion, it seems like most titles left in the dataset have proportion of reviews skewing towards the positive side (50% and above). 
+
+## Research Questions
+
+1. Do some developers get more positive reviews? 
+Some studios recieve better public sentiment. My hypothesis is that the bigger developers tend to get more mixed reviews (ratio of reviews that are positive lean towards 50%); on the other hand gamers are more forgiving towards smaller developers and hence will have more positive reviews. 
+
+2. Do certain genres get more positive reviews proportionally? What's the difference between genres in terms of the average and total volume of reviews and average proportion of positive reviews of each genre.
+The hypothesis is that for simulation and indie game, generally the player population are less intense and more forgiving therefore there will be more positive reviews. For Massively Multiplayer games, since the player community can be quite diverse, there are usually more toxic gameplay behaviour which can often be reflected in the less positive reviews on Steam.
+
+3. Which developer produces the most games and receives the most positive reviews?
+We can see how much of the market a developer takes up in the market and also gauge player sentiment towards a developer from these metrics. 
+
+4. Use logistic regression with the above variables with player sentiment as outcome variable and see if we can interpret the coefficients of the model.
+Interpreations of the coefficients can help us quantify how each factor contributes to player reviews. 
+
+---
 
 ### Attribution
 
