@@ -221,6 +221,8 @@ nrow(steam_games[steam_games$types=='app',]) == length(unique(steam_games[steam_
 
 ###### 1. Create a new variable based on other variables in your data (only if it makes sense)
 
+Reason: The review values are currently stored in columns that are stored as strings. We will need to extract them from the string and store them as numeric values for easier analysis later on.
+
 `ratio_of_postive_user_reviews`: extracted from `all_reviews`, the ratio of all reviews that were positive.
 
 ``` r
@@ -240,7 +242,7 @@ sg_copy = sg_copy %>% mutate(number_of_total_reviews =  as.numeric(gsub(",","",s
 
 ###### 2. Filter observations in your data according to your own criteria.
 
-We will only keep data that are of the `app` type which refers to the standard game. Since`bundle` and `sub` are referring to expansion packs or the sale contains other things tha the base game and is not a good measure for player sentiment of the game itself.
+Reason: We will only keep data that are of the `app` type which refers to the standard game. Since`bundle` and `sub` are referring to expansion packs or the sale contains other things tha the base game and is not a good measure for player sentiment of the game itself.
 
 ``` r
 sg_copy = sg_copy %>% filter(types == 'app')
@@ -254,6 +256,8 @@ dim(sg_copy) # 40,833 rows dropped to 38,021
 ```
 
 ###### 3. Investigate how many missing values there are per variable. Can you find a way to plot this?
+
+Reason: By checking Null rates in the data, we can see what variables can be used for future analysis. If a column contains too many NA and missing values, it wouldn't be giving us useful information. Additionally, by checking Null rate in the newly recreated columns, we can double check if our extraction from step 1 created any issues.
 
 ``` r
 NA_rate <- sg_copy %>% 
@@ -275,7 +279,7 @@ Notice that 25% of the 38K rows have NA as `all_reviews`. But a missing value ra
 
 ###### 4. Plot the distribution of a numeric variable.
 
-We will plot the distribution of player sentiment of titles to get a general understanding of how often a title is viewed positively. Additionally, we will reshape the data and look at it by genre. If a game has multiple genres, it will be counted once into each genre.
+Reason: We will plot the distribution of player sentiment of titles to get a general understanding of how often a title is viewed positively. Additionally, we will reshape the data and look at it by genre. If a game has multiple genres, it will be counted once into each genre.
 
 ``` r
 ggplot(sg_copy, aes(x=ratio_of_postive_user_reviews)) +
