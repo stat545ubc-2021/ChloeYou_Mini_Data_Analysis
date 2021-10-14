@@ -1,15 +1,7 @@
 Mini Data Analysis Milestone 2
 ================
 
-*To complete this milestone, you can either edit [this `.rmd` file](https://raw.githubusercontent.com/UBC-STAT/stat545.stat.ubc.ca/master/content/mini-project/mini-project-2.Rmd) directly. Fill in the sections that are commented out with `<!--- start your work here--->`. When you are done, make sure to knit to an `.md` file by changing the output in the YAML header to `github_document`, before submitting a tagged release on canvas.*
-
-# Welcome back to your mini data analysis project!
-
-This time, we will explore more in depth the concept of *tidy data*, and hopefully investigate further into your research questions that you defined in milestone 1.
-
-**NOTE**: The main purpose of the mini data analysis is to integrate what you learn in class in an analysis. Although each milestone provides a framework for you to conduct your analysis, it's possible that you might find the instructions too rigid for your data set. If this is the case, you may deviate from the instructions -- just make sure you're demonstrating a wide range of tools and techniques taught in this class.
-
-Begin by loading your data and the tidyverse package below:
+# Housekeeping Code
 
 ``` r
 sg_copy<-readRDS("m1_data.RData")
@@ -18,62 +10,20 @@ library(tidyverse)
 library(ggrepel)
 ```
 
-# Learning Objectives
-
-By the end of this milestone, you should:
-
--   Become familiar with manipulating and summarizing your data in tibbles using `dplyr` and `tidyr`, with a research question in mind.
--   Understand what *tidy* data is, and how to create it. In milestone 3, we will explore when this might be useful.
--   Generate a reproducible and clear report using R Markdown.
--   Gain a greater understanding of how to use R to answer research questions about your data.
-
-**Things to keep in mind**
-
--   Remember to document your code, be explicit about what you are doing, and write notes in this markdown document when you feel that context is required. Create your analysis as if someone else will be reading it! **There will be 2.5 points reserved for reproducibility, readability, and repo organization.**
-
--   Before working on each task, you should always keep in mind the specific **research question** that you're trying to answer.
-
 # Task 1: Process and summarize your data (15 points)
 
-From milestone 1, you should have an idea of the basic structure of your dataset (e.g. number of rows and columns, class types, etc.). Here, we will start investigating your data more in-depth using various data manipulation functions.
+### 1.1 Research Questions (2.5 points)
 
-### 1.1 (2.5 points)
+1.  Which publisher/developer produces the most games and receives the most positive reviews? We can see how much of the market a publisher takes up in the market and also gauge player sentiment towards a developer from these metrics.
 
-First, write out the 4 research questions you defined in milestone 1 were. This will guide your work through milestone 2:
+2.  Do some publishers get more positive reviews? Which ones? Some studios recieve better public sentiment. My hypothesis is that the bigger publishers tend to get more mixed reviews (ratio of reviews that are positive lean towards 50%); on the other hand gamers are more forgiving towards smaller developers/publishers and hence will have more positive reviews.
 
-<!-------------------------- Start your work below ---------------------------->
-1.  Do some publishers get more positive reviews? Some studios recieve better public sentiment. My hypothesis is that the bigger publishers tend to get more mixed reviews (ratio of reviews that are positive lean towards 50%); on the other hand gamers are more forgiving towards smaller developers/publishers and hence will have more positive reviews.
-
-2.  What's the difference between genres in terms of the average and total volume of reviews and average proportion of positive reviews of each genre. The popular genres such as Action, Adventure, RPG, Massive Multipler. What's the difference between genres in terms of the average and total volume of reviews and average proportion of positive reviews of each genre.
-
-3.  Which publisher/developer produces the most games and receives the most positive reviews? We can see how much of the market a publisher takes up in the market and also gauge player sentiment towards a developer from these metrics.
+3.  What's the difference between genres in terms of the average and total volume of reviews and average proportion of positive reviews of each genre. The popular genres such as Action, Adventure, RPG, Massive Multipler. What's the difference between genres in terms of the average and total volume of reviews and average proportion of positive reviews of each genre.
 
 4.  Use logistic regression with player sentiment as outcome variable and see if we can interpret the coefficients of the model. Interpreations of the coefficients can help us quantify how each factor contributes to player reviews.
 
-<!----------------------------------------------------------------------------->
-### 1.2 (10 points)
+### 1.2 Summarizing and Graphing (10 points)
 
-Now, for each of your four research questions, choose one task from options 1-4 (summarizing), and one other task from 4-8 (graphing). You should have 2 tasks done for each research question (8 total). Make sure it makes sense to do them! (e.g. don't use a numerical variables for a task that needs a categorical variable.). Comment on why each task helps (or doesn't!) answer the corresponding research question.
-
-Ensure that the output of each operation is printed!
-
-**Summarizing:**
-
-1.  Compute the *range*, *mean*, and *two other summary statistics* of **one numerical variable** across the groups of **one categorical variable** from your data.
-2.  Compute the number of observations for at least one of your categorical variables. Do not use the function `table()`!
-3.  Create a categorical variable with 3 or more groups from an existing numerical variable. You can use this new variable in the other tasks! *An example: age in years into "child, teen, adult, senior".*
-4.  Based on two categorical variables, calculate two summary statistics of your choosing.
-
-**Graphing:**
-
-1.  Create a graph out of summarized variables that has at least two geom layers.
-2.  Create a graph of your choosing, make one of the axes logarithmic, and format the axes labels so that they are "pretty" or easier to read.
-3.  Make a graph where it makes sense to customize the alpha transparency.
-4.  Create 3 histograms out of summarized variables, with each histogram having different sized bins. Pick the "best" one and explain why it is the best.
-
-Make sure it's clear what research question you are doing each operation for!
-
-<!------------------------- Start your work below ----------------------------->
 #### Research Question 1
 
 Which publishers produces the most games and receives the most positive reviews?
@@ -94,6 +44,8 @@ publishers <- sg_copy%>%
 
 Compute the range, mean, median, and standard deviation of ratio of positive user reviews, along with the number of games released on steam across the groups of publishers.
 
+**Comment:** The min, max, mean, median, and standard deviation of positive review ratios for all games of a publisher tells us the overall distribution of player reviews for the publisher. By counting how much unique games the publisher has on Steam we are able to roughly gauge which publishers produce more games.
+
 ``` r
 publisher_summary <- publishers %>% 
   group_by(publisher) %>%
@@ -108,7 +60,9 @@ publisher_summary <- publishers %>%
 
 ##### Graphing
 
-Create a graph out of summarized variables that has at least two geom layers. For visualization, the top 50 publishers with the most amount of games on Steam will be plotted here to gauge if there are any publishers that stand out in a positive way compared to others.
+Create a graph out of summarized variables that has at least two geom layers.
+
+**Comment:** For visualization, the top 50 publishers with the most amount of games on Steam will be plotted here to gauge if there are any publishers that have published many games and have also maintained a streak of positive reviews.
 
 ``` r
 ggplot(publisher_summary[1:50,], aes(x= games_on_steam, y= mean, label = publisher)) +
@@ -130,11 +84,16 @@ Based on the scatterplot, we see that the top 10 publishers with the most amount
 
 #### Research Question 2
 
-Do some publishers get more positive reviews? \#\#\#\#\# Summarizing Create a categorical variable with 3 or more groups from an existing numerical variable. For the games that each publisher owns, based on positive reviews, we will bucket them into a categorical variable with groups: - Negative (0,25%\] - Neutral (25%, 50%\] - Positive (50%,75%\] - Very\_Positive (75%,100\]
+Do some publishers get more positive reviews? Which ones? \#\#\#\#\# Summarizing Create a categorical variable with 3 or more groups from an existing numerical variable. For the games that each publisher owns, based on positive reviews, we will bucket them into a categorical variable with groups: - Negative (0,25%\] - Neutral (25%, 50%\] - Positive (50%,75%\] - Very\_Positive (75%,100\]
+
+**Comment:** It will be easier to visualize the differences between categorized player reviews and will be easier to use them as the outcome for building a logistic regression which is a type of model that is easier to interpret.
 
 ``` r
 ((publisher_categorical_review <- publishers %>% 
-  mutate(category=cut(ratio_of_postive_user_reviews, breaks=c(0, 0.25, 0.5, 0.75, 1), labels=c("negative","neutral","positive","very_positive"))) %>%
+   mutate(category = case_when(ratio_of_postive_user_reviews < 0.25 ~ "negative",
+                                 ratio_of_postive_user_reviews < 0.5~ "neutral",
+                                ratio_of_postive_user_reviews < 0.75 ~ "positive",
+                                 ratio_of_postive_user_reviews <= 1 ~ "very_positive"))%>%
   group_by(publisher, category) %>%
   summarise(n=n_distinct(id)) %>%
    filter(publisher %in% publisher_summary$publisher[1:20]) ## only look at the top 20 publishers on Steam
@@ -143,25 +102,27 @@ Do some publishers get more positive reviews? \#\#\#\#\# Summarizing Create a ca
 
     ## `summarise()` has grouped output by 'publisher'. You can override using the `.groups` argument.
 
-    ## # A tibble: 68 x 3
+    ## # A tibble: 67 x 3
     ## # Groups:   publisher [20]
     ##    publisher        category          n
-    ##    <chr>            <fct>         <int>
+    ##    <chr>            <chr>         <int>
     ##  1 1C Entertainment neutral          10
-    ##  2 1C Entertainment positive         40
-    ##  3 1C Entertainment very_positive    35
+    ##  2 1C Entertainment positive         38
+    ##  3 1C Entertainment very_positive    37
     ##  4 2K               negative          1
-    ##  5 2K               neutral          15
-    ##  6 2K               positive         50
-    ##  7 2K               very_positive    61
-    ##  8 Activision       negative          1
-    ##  9 Activision       neutral          13
-    ## 10 Activision       positive         21
-    ## # ... with 58 more rows
+    ##  5 2K               neutral          12
+    ##  6 2K               positive         52
+    ##  7 2K               very_positive    62
+    ##  8 Activision       neutral          10
+    ##  9 Activision       positive         25
+    ## 10 Activision       very_positive    58
+    ## # ... with 57 more rows
 
 ##### Graphing
 
-Create a graph out of summarized variables that has at least two geom layers. Stacked Bar Chart
+Create a graph out of summarized variables that has at least two geom layers.
+
+**Comment:** The summarized variables is the number of games for each publisher that falls into one of the categorized player review buckets. We use a stacked bar chart to show for the top 20 largest publishers on Steam, the proportion of titles that fall into each player review bucket.
 
 ``` r
 ggplot(publisher_categorical_review, 
@@ -173,6 +134,8 @@ ggplot(publisher_categorical_review,
 
 ![](mini-project-2_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
+Sekai Project, Devolver Digital, Nightdive Studios have an overwhelming proportion of games that have very positive reviews.
+
 #### Research Question 3
 
 What's the difference between genres in terms of the average and total volume of reviews and average proportion of positive reviews of each genre.
@@ -181,6 +144,8 @@ What's the difference between genres in terms of the average and total volume of
 
 Compute the number of observations within each genre. Based on prior knowledge, we choose the following 11 most popular genres and omit the other ones.
 
+**Comment:** Computing the number of games that exist in each genre is helpful in understanding how big the genre is on Steam. Although this alone does not suffice to understand the reseach question we have in mind. Additional calculations of total reviews received in genre, average number of reviews received per title will be needed to answer the question. For now, I have sneaked in the calculation of average positive review ratio into the summary, along with the number of observations within each genre.
+
 ``` r
 ((genres_summary<- sg_copy %>%
   select(id, genre, ratio_of_postive_user_reviews, number_of_total_reviews) %>% 
@@ -188,8 +153,6 @@ Compute the number of observations within each genre. Based on prior knowledge, 
   filter(genre %in% c("Strategy","Sports","Simulation","RPG","Racing","Massively Multiplayer", "Indie", "Free to Play","Casual","Adventure","Action")) %>%
   group_by(genre) %>%
   summarise(number_of_titles = n_distinct(id),
-            # total_reviews = sum(number_of_total_reviews, na.rm=T),
-            # avg_reviews_per_title = mean(number_of_total_reviews, na.rm=T),
             avg_ratio_of_postive_reviews = mean(ratio_of_postive_user_reviews, na.rm=T)
             ) %>%
     arrange(desc(number_of_titles))
@@ -215,6 +178,8 @@ Compute the number of observations within each genre. Based on prior knowledge, 
 
 Create a graph out of the summarized variable- number of observation by genre, that has at least two geom layers.
 
+**Comment:** Number of games in genre is plotted against the average positive review ratio as a scatterplot.
+
 ``` r
 ggplot(genres_summary, aes(number_of_titles, avg_ratio_of_postive_reviews, label= genre))+
   geom_point() +
@@ -229,17 +194,28 @@ ggplot(genres_summary, aes(number_of_titles, avg_ratio_of_postive_reviews, label
 
 ![](mini-project-2_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
+There are less Massively Multiplayer games on Steam and they seem to have a lower average positive review ratio. While there are many Indie games and average reviews is 17% higher than the Massively Multiplayer genre.
+
 #### Research Question 4:
 
 Use logistic regression with player sentiment as outcome variable and see if we can interpret the coefficients of the model.
 
-We continue to try and find if there are other variables in the dataset that contribute to players' sentiment towards a game. We now use the categorized game review that we obtained in Reseach Question \#2. We want to see if there are any correlation between player sentiment and the original pricing of the game. \#\#\#\#\# Summary: Compute the *range*, *mean*, and *two other summary statistics* of original price across the groups of player review defined in Research Question 2.
+We continue to try and find if there are other variables in the dataset that contribute to players' sentiment towards a game. We now use the categorized game review that we obtained in Reseach Question \#2. We want to see if there are any correlation between player sentiment and the original pricing of the game.
+
+##### Summary:
+
+Compute the range, mean, and median, sd of original price across the groups of categorical player review defined in Research Question 2.
+
+**Comment:** If there are any patterns in how a game is rated vs the original price, we might be able to use price as one of the explanatory variable in the logistic regression to predict player review category. We can see if the mean is significantly different for example.
 
 ``` r
 publishers <- publishers %>% 
-  mutate(category=cut(ratio_of_postive_user_reviews, breaks=c(0, 0.25, 0.5, 0.75, 1), labels=c("negative","neutral","positive","very_positive"))) %>%
+   mutate(category = case_when(ratio_of_postive_user_reviews < 0.25 ~ "negative",
+                                 ratio_of_postive_user_reviews < 0.5~ "neutral",
+                                ratio_of_postive_user_reviews < 0.75 ~ "positive",
+                                 ratio_of_postive_user_reviews <= 1 ~ "very_positive"))  %>%
   group_by(category) %>% 
-  filter(id != 18640, !is.na(category))  # this original price is 650560 which is not very likely
+  filter(id != 18640, !is.na(category))  # this game id has original price equal to 650560 which is likely a typo
   
   
 publishers %>%  
@@ -254,72 +230,61 @@ summarise(min= min(original_price),
 
     ## # A tibble: 4 x 8
     ##   category        min   max   IQR  mean median    sd     n
-    ##   <fct>         <dbl> <dbl> <dbl> <dbl>  <dbl> <dbl> <int>
-    ## 1 negative          0  111.     7  9.68   4.99  13.3   272
-    ## 2 neutral           0  625.    11 14.8    4.99  50.3  1645
-    ## 3 positive          0  625.    13 17.3    6.99  50.1  5216
-    ## 4 very_positive     0  625.    12 15.2    7.99  43.3  9165
+    ##   <chr>         <dbl> <dbl> <dbl> <dbl>  <dbl> <dbl> <int>
+    ## 1 negative          0  111.   8.5  9.96   4.99  14.3   254
+    ## 2 neutral           0  625.  13.0 14.1    4.99  46.4  1428
+    ## 3 positive          0  625.  13   17.5    6.99  51.4  5113
+    ## 4 very_positive     0  625.  12   15.2    7.99  43.3  9517
 
 ##### Graphing
 
 Make a graph where it makes sense to customize the alpha transparency.
 
-``` r
-ggplot(publishers, aes(x=original_price, y= category, fill = category)) +
-   ggridges::geom_density_ridges(alpha = .2) 
-```
-
-    ## Picking joint bandwidth of 1.5
-
-![](mini-project-2_files/figure-markdown_github/unnamed-chunk-10-1.png)
+**Comment:** The density distrbution of original price by review category can help us see if there are any correlation between pricing and how the game is rated. Since there might be some overlapping of the chart for each category, we will need to adjust the alpha transparency. Also since the tail of the pricing is quite long but not many games have prices above 50, we will cap the price limit on the graph to 50 so we can identify differences easier.
 
 ``` r
-ggplot(publishers, aes(x=original_price, y= category, fill = category)) +
-   ggridges::geom_density_ridges(alpha = .2) + xlim(0,200)
-```
+# ggplot(publishers, aes(x=original_price, y= category, fill = category)) +
+#   ggridges::geom_density_ridges(alpha = .2) 
 
-    ## Picking joint bandwidth of 1.5
-
-    ## Warning: Removed 200 rows containing non-finite values (stat_density_ridges).
-
-![](mini-project-2_files/figure-markdown_github/unnamed-chunk-10-2.png)
-
-``` r
+# ggplot(publishers, aes(x=original_price, y= category, fill = category)) +
+#   ggridges::geom_density_ridges(alpha = .2) + xlim(0,200)
 ggplot(publishers, aes(x=original_price, y= category, fill = category)) +
    ggridges::geom_density_ridges(alpha = .2) + xlim(0,50)
 ```
 
-    ## Picking joint bandwidth of 1.43
+    ## Picking joint bandwidth of 1.49
 
-    ## Warning: Removed 610 rows containing non-finite values (stat_density_ridges).
+    ## Warning: Removed 611 rows containing non-finite values (stat_density_ridges).
 
-![](mini-project-2_files/figure-markdown_github/unnamed-chunk-10-3.png)
+![](mini-project-2_files/figure-markdown_github/unnamed-chunk-10-1.png)
+
+Games that are rated negatively are less likely to be in the 25+ price range compared to the other groups. Surprisingly the peak of the negatively rated games is pricier than the peak of those games that are rated positively or neutrally. It will be interesting to see if it was rated poorly because the actual quality of the game doesn't match the price or some other reason.
 
 ### 1.3 (2.5 points)
 
-Based on the operations that you've completed, how much closer are you to answering your research questions? Think about what aspects of your research questions remain unclear. Can your research questions be refined, now that you've investigated your data a bit more? Which research questions are yielding interesting results?
+The initial reseach goal is to understand the association between player sentiments(game ratings) and other variables such as genres, publishers, pricing. After some data exploration, we have identified some interesting trends in the data that addressed the above research goal.
 
-<!------------------------- Write your answer here ---------------------------->
-<!----------------------------------------------------------------------------->
+Additionally, the research questions can be refined to a limited pool of publishers and genres, since there are an overwhelming amount of publishers and genres. If we focus on the games produced by the 20 largest publishers and the 11 most popular genres, then we might be able to find stronger signals in the data to help build a prediction model.
+
+Since there are so many publishers in the dataset, it is probably a good idea to keep publisher out of the prediction model and simply look at data that is published by them for simplicity sake.
+
+Research Question 3 & 4(Genre & Pricing of the game) is yielding interesting results. We saw that there are less Massively Multiplayer games on Steam and they seem to have a lower average positive review ratio. While there are many Indie games and average reviews is 17% higher than the Massively Multiplayer genre. We can continue to see if genres play a role in determining the average number of ratings received per title and also use the categorized player review instead of the numerical values. We also saw some differences in terms of the prices of the games that fall into each review buckets.
+
 # Task 2: Tidy your data (12.5 points)
 
-In this task, we will do several exercises to reshape our data. The goal here is to understand how to do this reshaping with the `tidyr` package.
+### 2.1 Explain Data Tidiness (2.5 points)
 
-A reminder of the definition of *tidy* data:
+Select the columns that have been used or will be useful for the analysis.
 
--   Each row is an **observation**
--   Each column is a **variable**
--   Each cell is a **value**
+``` r
+# select 8 columns from dataset
+games<- sg_copy %>%
+  select(id, name, genre, publisher, original_price, release_date,ratio_of_postive_user_reviews,number_of_total_reviews)
+```
 
-*Tidy'ing* data is sometimes necessary because it can simplify computation. Other times it can be nice to organize data so that it can be easier to understand when read manually.
+The subsetted data is indeed tidy since it meets the following critera: 1. Each variable has its own column. 2. Each observation(game) has its own row. 3. Each value has its own cell.
 
-### 2.1 (2.5 points)
-
-Based on the definition above, can you identify if your data is tidy or untidy? Go through all your columns, or if you have &gt;8 variables, just pick 8, and explain whether the data is untidy or tidy.
-
-<!--------------------------- Start your work below --------------------------->
-<!----------------------------------------------------------------------------->
-### 2.2 (5 points)
+### 2.2 Untidy and Tidy Data (5 points)
 
 Now, if your data is tidy, untidy it! Then, tidy it back to it's original state.
 
@@ -327,17 +292,110 @@ If your data is untidy, then tidy it! Then, untidy it back to it's original stat
 
 Be sure to explain your reasoning for this task. Show us the "before" and "after".
 
-<!--------------------------- Start your work below --------------------------->
-<!----------------------------------------------------------------------------->
-### 2.3 (5 points)
+We will untidy the data by having the categories of Genres as variables and the rating as the value in the cells of that column, which will lead to a wide table with many NAs.
 
-Now, you should be more familiar with your data, and also have made progress in answering your research questions. Based on your interest, and your analyses, pick 2 of the 4 research questions to continue your analysis in milestone 3, and explain your decision.
+``` r
+head(games) # Before
+```
 
-Try to choose a version of your data that you think will be appropriate to answer these 2 questions in milestone 3. Use between 4 and 8 functions that we've covered so far (i.e. by filtering, cleaning, tidy'ing, dropping irrelvant columns, etc.).
+    ## # A tibble: 6 x 8
+    ##      id name    genre    publisher  original_price release_date ratio_of_postiv~
+    ##   <dbl> <chr>   <chr>    <chr>               <dbl> <chr>                   <dbl>
+    ## 1     1 DOOM    Action   Bethesda ~           20.0 May 12, 2016             0.92
+    ## 2     2 PLAYER~ Action,~ PUBG Corp~           30.0 Dec 21, 2017             0.49
+    ## 3     3 BATTLE~ Action,~ Paradox I~           40.0 Apr 24, 2018             0.71
+    ## 4     4 DayZ    Action,~ Bohemia I~           45.0 Dec 13, 2018             0.61
+    ## 5     5 EVE On~ Action,~ CCP,CCP               0   May 6, 2003              0.74
+    ## 6     7 Devil ~ Action   CAPCOM Co~           60.0 Mar 7, 2019              0.92
+    ## # ... with 1 more variable: number_of_total_reviews <dbl>
 
-<!--------------------------- Start your work below --------------------------->
-<!----------------------------------------------------------------------------->
-*When you are done, knit an `md` file. This is what we will mark! Make sure to open it and check that everything has knitted correctly before submitting your tagged release.*
+``` r
+untidy <- games %>% pivot_wider(id_cols = c(-genre, -ratio_of_postive_user_reviews),
+                names_from = genre,
+                values_from = ratio_of_postive_user_reviews)
+
+head(untidy) # After
+```
+
+    ## # A tibble: 6 x 1,192
+    ##      id name    publisher    original_price release_date number_of_total~ Action
+    ##   <dbl> <chr>   <chr>                 <dbl> <chr>                   <dbl>  <dbl>
+    ## 1     1 DOOM    Bethesda So~           20.0 May 12, 2016            42550   0.92
+    ## 2     2 PLAYER~ PUBG Corpor~           30.0 Dec 21, 2017           836608  NA   
+    ## 3     3 BATTLE~ Paradox Int~           40.0 Apr 24, 2018             7030  NA   
+    ## 4     4 DayZ    Bohemia Int~           45.0 Dec 13, 2018           167115  NA   
+    ## 5     5 EVE On~ CCP,CCP                 0   May 6, 2003             11481  NA   
+    ## 6     7 Devil ~ CAPCOM Co.,~           60.0 Mar 7, 2019              9645   0.92
+    ## # ... with 1,185 more variables: Action,Adventure,Massively Multiplayer <dbl>,
+    ## #   Action,Adventure,Strategy <dbl>,
+    ## #   Action,Free to Play,Massively Multiplayer,RPG,Strategy <dbl>,
+    ## #   Adventure,Indie <dbl>, Strategy,Early Access <dbl>,
+    ## #   Action,Adventure,RPG <dbl>, Adventure,Indie,RPG,Strategy <dbl>,
+    ## #   Adventure <dbl>,
+    ## #   Action,Adventure,Free to Play,Massively Multiplayer,RPG <dbl>, ...
+
+Next we will tidy it back to it's original state which is having a variable called genre that holds the names of genre and a variable to store the ratio of postive user reviews.
+
+``` r
+tidy <- untidy %>% 
+  pivot_longer(cols = c(-id, -name, -publisher, -original_price, -release_date,-number_of_total_reviews), 
+               names_to  = "genre", 
+               values_to = "ratio_of_postive_user_reviews",
+              values_drop_na = TRUE)
+head(tidy)
+```
+
+    ## # A tibble: 6 x 8
+    ##      id name    publisher   original_price release_date number_of_total~ genre  
+    ##   <dbl> <chr>   <chr>                <dbl> <chr>                   <dbl> <chr>  
+    ## 1     1 DOOM    Bethesda S~           20.0 May 12, 2016            42550 Action 
+    ## 2     2 PLAYER~ PUBG Corpo~           30.0 Dec 21, 2017           836608 Action~
+    ## 3     3 BATTLE~ Paradox In~           40.0 Apr 24, 2018             7030 Action~
+    ## 4     4 DayZ    Bohemia In~           45.0 Dec 13, 2018           167115 Action~
+    ## 5     5 EVE On~ CCP,CCP                0   May 6, 2003             11481 Action~
+    ## 6     7 Devil ~ CAPCOM Co.~           60.0 Mar 7, 2019              9645 Action 
+    ## # ... with 1 more variable: ratio_of_postive_user_reviews <dbl>
+
+### 2.3 Pick 2 Research Questions and Finalize Dataset(5 points)
+
+I will continue to work on Research Questions 3 & 4. We can continue to see if genres play a role in determining the average number of ratings received per title and also use the categorized player review instead of the numerical values. We also saw some differences in terms of the prices of the games that fall into each review buckets. These variables can be helpful in creating the logistic regression mentioned in Research Question 4.
+
+We will filter and clean the dataset to only contain games from the 11 most popular genres and from Steam's top 20 publishers (in terms of number of games published on Steam). We end up with a dataset with 3,069 observations and 9 variables.
+
+``` r
+## finalize dataset 
+genre_list= 'Strategy|Sports|Simulation|RPG|Racing|Massively Multiplayer|Indie|Free to Play|Casual|Adventure|Action'
+top20_publishers= 'Paradox Interactive|SEGA|Dovetail Games - Trains|Feral Interactive (Mac)|Square Enix|Ubisoft|2K|BANDAI NAMCO Entertainment|THQ Nordic|Feral Interactive|Activision|Degica|Devolver Digital|1C Entertainment|Deep Silver|Aspyr (Mac)|Nightdive Studios|Slitherine Ltd.|Focus Home Interactive|Sekai Project'
+  
+
+m2_end <- sg_copy %>%
+  select(id, name, genre, publisher, original_price, release_date,ratio_of_postive_user_reviews,number_of_total_reviews) %>%  
+  mutate(category = case_when(ratio_of_postive_user_reviews < 0.25 ~ "negative",
+                                ratio_of_postive_user_reviews < 0.5~ "neutral",
+                                ratio_of_postive_user_reviews < 0.75 ~ "positive",
+                                 ratio_of_postive_user_reviews <= 1 ~ "very_positive")) %>%
+  filter(grepl(top20_publishers, publisher)) %>% ## only look at the top 20 publishers on Steam
+  filter(grepl(genre_list, genre)) %>% # restrict to games genre in this list
+  filter(id != 18640)  # this game id has original price equal to 650560 which is likely a typo
+
+glimpse(m2_end) # 3069 x 9
+```
+
+    ## Rows: 3,069
+    ## Columns: 9
+    ## $ id                            <dbl> 3, 14, 18, 21, 23, 24, 30, 34, 38, 41, 5~
+    ## $ name                          <chr> "BATTLETECH", "Call of Duty®: Modern War~
+    ## $ genre                         <chr> "Action,Adventure,Strategy", "Action", "~
+    ## $ publisher                     <chr> "Paradox Interactive,Paradox Interactive~
+    ## $ original_price                <dbl> 39.99, 1.02, 59.99, 1.02, 39.99, 19.99, ~
+    ## $ release_date                  <chr> "Apr 24, 2018", "Jul 27, 2017", "Feb 7, ~
+    ## $ ratio_of_postive_user_reviews <dbl> 0.71, 0.51, 0.77, 0.84, 0.70, 0.90, 0.81~
+    ## $ number_of_total_reviews       <dbl> 7030, 1118, 1945, 4190, 487, 9757, 2701,~
+    ## $ category                      <chr> "positive", "positive", "very_positive",~
+
+``` r
+saveRDS(m2_end, "m2_end.RData")
+```
 
 ### Attribution
 
