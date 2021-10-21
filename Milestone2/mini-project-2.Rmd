@@ -6,7 +6,7 @@ output: github_document
 # Housekeeping Code
 
 ```{r, message = FALSE}
-sg_copy<-readRDS("m1_data.RData")
+sg_copy<-readRDS(here::here("Milestone1","m1_data.RData"))
 library(datateachr) # <- might contain the data you picked!
 library(tidyverse)
 library(ggrepel)
@@ -26,8 +26,7 @@ Some studios recieve better public sentiment. My hypothesis is that the bigger p
 The popular genres such as Action, Adventure, RPG, Massive Multipler. What's the difference between genres in terms of the average and total volume of reviews and average proportion of positive reviews of each genre.
 
 
-4. Use logistic regression with player sentiment as outcome variable and see if we can interpret the coefficients of the model.
-Interpreations of the coefficients can help us quantify how each factor contributes to player reviews. 
+4. Use regression with player sentiment as outcome variable and see if we can interpret the coefficients of the model.
 
 
 ### 1.2 Summarizing and Graphing (10 points)
@@ -283,7 +282,7 @@ m2_end <- sg_copy %>%
 
 glimpse(m2_end) # 3069 x 9
 
-saveRDS(m2_end, "m2_end.RData")
+saveRDS(m2_end, here::here("Milestone2","m2_end.RData"))
 ```
 
 

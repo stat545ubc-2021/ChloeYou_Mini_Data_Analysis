@@ -4,7 +4,7 @@ Mini Data Analysis Milestone 2
 # Housekeeping Code
 
 ``` r
-sg_copy<-readRDS("m1_data.RData")
+sg_copy<-readRDS(here::here("Milestone1","m1_data.RData"))
 library(datateachr) # <- might contain the data you picked!
 library(tidyverse)
 library(ggrepel)
@@ -394,7 +394,7 @@ glimpse(m2_end) # 3069 x 9
     ## $ category                      <chr> "positive", "positive", "very_positive",~
 
 ``` r
-saveRDS(m2_end, "m2_end.RData")
+saveRDS(m2_end, here::here("Milestone2","m2_end.RData"))
 ```
 
 ### Attribution

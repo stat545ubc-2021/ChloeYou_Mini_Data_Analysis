@@ -311,7 +311,7 @@ sg_copy %>%
 ![](Milestone1_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 ``` r
-saveRDS(sg_copy, file= "m1_data.RData")
+saveRDS(sg_copy, here::here("Milestone1","m1_data.RData"))
 ```
 
 Right off the bat, we see that Massively Multiplayer titles tend to have proportionally less positive reviews compared to other genres. Free-to-play games seen to have more mixed reviews since it has a relatively even spread compared to other genres. We can conclude from the plot that there are indeed visable differences in player sentiment across game genres.

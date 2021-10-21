@@ -1,0 +1,177 @@
+---
+title: "Mini Data-Analysis Deliverable 3"
+output: github_document
+---
+
+# Housekeeping Code
+
+```{r, message = FALSE}
+data <- readRDS(here::here('Milestone2','m2_end.RData')) # load cleaned data from milestone 2
+library(datateachr) # <- might contain the data you picked!
+library(tidyverse)
+library(forcats)
+library(lubridate)
+library(tsibble)
+```
+
+# Two Research Questions
+
+**1. What's the review difference between genres?**
+
+The popular genres such as Action, Adventure, RPG, Massive Multipler. What's the difference between genres in terms of the average and total volume of reviews and average proportion of positive reviews of each genre.
+
+**2. Use linear model with ratings as outcome variable **
+
+
+# Exercise 1: Special Data Types (10)
+
+### Plot from Previous Milestone
+```{r}
+data %>%
+  select(id, genre, ratio_of_postive_user_reviews) %>% 
+  separate_rows(genre, sep= ",") %>% 
+  filter(genre %in% c("Strategy","Sports","Simulation","RPG","Racing","Massively Multiplayer",
+                      "Indie", "Free to Play","Casual","Adventure","Action")) %>% # filter out the non-popular genres. popularity based on prior knowledge. 
+   ggplot(aes(x=ratio_of_postive_user_reviews, y= genre, fill = genre)) +
+   ggridges::geom_density_ridges(alpha = .2) +
+  xlab("ratio") + 
+  ggtitle("Distribution of the Ratio of Positive Reviews by Genre") +
+  xlim(0,1) +
+  theme(legend.position = "none") 
+```
+
+### Choose Two Tasks
+
+**Task Number**: 2
+We will group some of the game genres together and label them as `other` since we suspect the player demographic in these genres is more casual compared to others. `Indie`,`Casual`,`Simulation`,`Strategy`, `Free to Play`, `Racing` are grouped as `Other`. 
+```{r}
+ex1 <- data %>%
+  separate_rows(genre, sep= ",") %>% 
+  filter(genre %in% c("Strategy","Sports","Simulation","RPG","Racing","Massively Multiplayer", "Indie", "Free to Play","Casual","Adventure","Action")) %>% 
+  mutate(genre = as_factor(genre), genre =   fct_other(genre,drop=c("Indie","Casual","Simulation","Strategy", "Free to Play", "Racing")))
+
+ex1 %>%
+  select(id, genre, ratio_of_postive_user_reviews) %>% 
+   ggplot(aes(x=ratio_of_postive_user_reviews, y= genre, fill = genre)) +
+   ggridges::geom_density_ridges(alpha = .2) +
+  xlab("ratio") + 
+  ggtitle("Distribution of the Ratio of Positive Reviews by Genre") +
+  xlim(0,1) +
+  theme(legend.position = "none") 
+```
+
+
+**Task Number**: 3
+We will extract the year of the game release date `release_date` and use it as one of the variable in the linear model to predict player sentiment, since we suspect that the games that are released later have better quality and players might rate them higher.  
+
+```{r}
+# make new column that extracts the year from release date
+ex2 <- ex1 %>%
+  filter(grepl(',', release_date))%>% # removes rows with inconsistent date format
+  mutate(release_year = year(mdy(release_date)))
+glimpse(ex2)
+```
+
+
+
+# Exercise 2: Modelling
+
+## 2.0 (no points)
+
+**Research Question**: Use linear regression with player sentiment as outcome and see if we can predict it based on the genre, original price, release year, and number of total reviews. 
+
+**Variable of interest**: `ratio_of_postive_user_reviews`
+
+
+## 2.1 Fit a Model (5 points)
+
+Clean the dataset and partition into training and testing set for the next question.
+```{r}
+model_data <- ex2 %>% mutate(
+  category = as.factor(category),
+  genre = as.factor(genre),
+  original_price = as.numeric(original_price),
+  number_of_total_reviews = as.numeric(number_of_total_reviews),
+  release_year = as.factor(release_year),
+  ratio_of_postive_user_reviews = as.numeric(ratio_of_postive_user_reviews)
+)
+
+## 75% of the sample size
+smp_size <- floor(0.75 * nrow(model_data))
+
+## set the seed to make partition reproducible
+set.seed(123)
+train_ind <- sample(seq_len(nrow(model_data)), size = smp_size)
+
+train <- model_data[train_ind, ]
+test <- model_data[-train_ind, ]  
+
+```
+
+#### Store the model object as a variable, and print its output to screen.
+```{r}
+lm <- lm(ratio_of_postive_user_reviews~ genre + original_price + number_of_total_reviews + release_year , data = train)
+
+lm
+```
+
+## 2.2 Extract Regression Coefficient and P-value (5 points)
+
+Extract the regression coefficient and p-value of each term using the `broom`package.
+  
+```{r}
+broom::tidy(lm)
+```
+
+
+# Exercise 3: Reading and writing data
+
+Get set up for this exercise by making a folder called `output` in the top level of your project folder / repository. You'll be saving things there. 
+
+## 3.1 (5 points)
+
+Take a summary table that you made from Milestone 2 (Exercise 1.2), and write it as a csv file in your `output` folder. Use the `here::here()` function.
+
+- **Robustness criteria**: You should be able to move your Mini Project repository / project folder to some other location on your computer, or move this very Rmd file to another location within your project repository / folder, and your code should still work.
+- **Reproducibility criteria**: You should be able to delete the csv file, and remake it simply by knitting this Rmd file. 
+  
+```{r}
+# reference: https://stackoverflow.com/questions/4216753/check-existence-of-directory-and-create-if-doesnt-exist
+if (!dir.exists(here::here("output"))){
+  dir.create(here::here("output"))
+}
+
+sg_copy<- readRDS( here::here("Milestone1","m1_data.RData"))# read from milestone 2 data to recreate summary table
+
+# create summary table below
+genres_summary<- sg_copy %>%
+  select(id, genre, ratio_of_postive_user_reviews, number_of_total_reviews) %>% 
+  separate_rows(genre, sep= ",") %>% 
+  filter(genre %in% c("Strategy","Sports","Simulation","RPG","Racing","Massively Multiplayer", "Indie", "Free to Play","Casual","Adventure","Action")) %>%
+  group_by(genre) %>%
+  summarise(number_of_titles = n_distinct(id),
+            avg_ratio_of_postive_reviews = mean(ratio_of_postive_user_reviews, na.rm=T)
+            ) %>%
+    arrange(desc(number_of_titles))
+
+# write csv, overwrite if already exists
+write_csv(genres_summary,here::here("output","m3_3_1.csv") )
+```
+
+
+## 3.2 (5 points)
+
+Write your model object from Exercise 2 to an R binary file (an RDS), and load it again. Be sure to save the binary file in your `output` folder. Use the functions `saveRDS()` and `readRDS()`. 
+
+- The same robustness and reproducibility criteria as in 3.1 apply here.
+
+```{r}
+saveRDS(lm,here::here("output",'m3_lm.rds'))
+
+read_lm <- readRDS(here::here("output",'m3_lm.rds'))
+
+read_lm
+```
+
+
+
