@@ -18,7 +18,7 @@ library(tsibble)
 
 The popular genres such as Action, Adventure, RPG, Massive Multipler. What's the difference between genres in terms of the average and total volume of reviews and average proportion of positive reviews of each genre.
 
-**2. Use linear model with ratings as outcome variable **
+**2. Use linear model with ratings as outcome variable**
 
 # Exercise 1: Special Data Types (10)
 
@@ -46,7 +46,9 @@ data %>%
 
 ### Choose Two Tasks
 
-**Task Number**: 2 We will group some of the game genres together and label them as `other` since we suspect the player demographic in these genres is more casual compared to others. `Indie`,`Casual`,`Simulation`,`Strategy`, `Free to Play`, `Racing` are grouped as `Other`.
+**Task Number**: 2
+
+We will group some of the game genres together and label them as `other` since we suspect the player demographic in these genres is more casual compared to others. `Indie`,`Casual`,`Simulation`,`Strategy`, `Free to Play`, `Racing` are grouped as `Other`.
 
 ``` r
 ex1 <- data %>%
@@ -70,7 +72,9 @@ ex1 %>%
 
 ![](mini-project-3_files/figure-markdown_github/unnamed-chunk-3-1.png)
 
-**Task Number**: 3 We will extract the year of the game release date `release_date` and use it as one of the variable in the linear model to predict player sentiment, since we suspect that the games that are released later have better quality and players might rate them higher.
+**Task Number**: 3
+
+We will extract the year of the game release date `release_date` and use it as one of the variable in the linear model to predict player sentiment, since we suspect that the games that are released later have better quality and players might rate them higher.
 
 ``` r
 # make new column that extracts the year from release date
@@ -206,8 +210,6 @@ broom::tidy(lm)
 
 # Exercise 3: Reading and writing data
 
-Get set up for this exercise by making a folder called `output` in the top level of your project folder / repository. You'll be saving things there.
-
 ## 3.1 (5 points)
 
 Take a summary table that you made from Milestone 2 (Exercise 1.2), and write it as a csv file in your `output` folder. Use the `here::here()` function.
@@ -241,8 +243,6 @@ write_csv(genres_summary,here::here("output","m3_3_1.csv") )
 ## 3.2 (5 points)
 
 Write your model object from Exercise 2 to an R binary file (an RDS), and load it again. Be sure to save the binary file in your `output` folder. Use the functions `saveRDS()` and `readRDS()`.
-
--   The same robustness and reproducibility criteria as in 3.1 apply here.
 
 ``` r
 saveRDS(lm,here::here("output",'m3_lm.rds'))
@@ -298,26 +298,3 @@ read_lm
     ##                 -9.405e-02                  -1.113e-01  
     ##           release_year2019  
     ##                 -1.080e-01
-
-# Tidy Repository
-
-Now that this is your last milestone, your entire project repository should be organized. Here are the criteria we're looking for.
-
-## Main README (3 points)
-
-There should be a file named `README.md` at the top level of your repository. Its contents should automatically appear when you visit the repository on GitHub.
-
-Minimum contents of the README file:
-
--   In a sentence or two, explains what this repository is, so that future-you or someone else stumbling on your repository can be oriented to the repository.
--   In a sentence or two (or more??), briefly explains how to engage with the repository. You can assume the person reading knows the material from STAT 545A. Basically, if a visitor to your repository wants to explore your project, what should they know?
-
-Once you get in the habit of making README files, and seeing more README files in other projects, you'll wonder how you ever got by without them! They are tremendously helpful.
-
-## File and Folder structure (3 points)
-
-You should have at least four folders in the top level of your repository: one for each milestone, and one output folder. If there are any other folders, these are explained in the main README.
-
-Each milestone document is contained in its respective folder, and nowhere else.
-
-Every level-1 folder (that is, the ones stored in the top level, like "Milestone1" and "output") has a `README` file, explaining in a sentence or two what is in the folder, in plain language (it's enough to say something like "This folder contains the source for Milestone 1").
